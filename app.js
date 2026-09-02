@@ -3,6 +3,7 @@
 
   const config = window.INVITATION_CONFIG;
   const INVITE_TOKEN_KEY = "anniversary-rsvp-token";
+  const INVITATION_OPEN_KEY = "anniversary-invitation-open-v2";
 
   if (!config) {
     document.body.classList.remove("is-locked");
@@ -318,6 +319,7 @@
     const openButton = $("#open-invitation");
     const main = $("#main-content");
     const backgroundElements = [$("#site-header"), main, $("footer")].filter(Boolean);
+    let isOpening = false;
 
     function setBackgroundInert(isInert) {
       backgroundElements.forEach((element) => {
@@ -328,25 +330,35 @@
     }
 
     function openInvitation(shouldFocus = true) {
-      gate.classList.add("is-open");
-      document.body.classList.remove("is-locked");
-      setBackgroundInert(false);
+      if (isOpening) return;
+      isOpening = true;
+      const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const openingDuration = reduceMotion ? 0 : 760;
+      const fadeDuration = reduceMotion ? 0 : 380;
+      openButton.setAttribute("aria-disabled", "true");
+      gate.classList.add("is-opening");
 
       try {
-        window.sessionStorage.setItem("anniversary-invitation-open", "true");
+        window.sessionStorage.setItem(INVITATION_OPEN_KEY, "true");
       } catch {
         // Storage can be unavailable in private browsing. The invitation still works.
       }
 
       window.setTimeout(() => {
-        gate.hidden = true;
-        if (shouldFocus) main.focus({ preventScroll: true });
-      }, 380);
+        gate.classList.add("is-open");
+
+        window.setTimeout(() => {
+          gate.hidden = true;
+          document.body.classList.remove("is-locked");
+          setBackgroundInert(false);
+          if (shouldFocus) main.focus({ preventScroll: true });
+        }, fadeDuration);
+      }, openingDuration);
     }
 
     let alreadyOpened = false;
     try {
-      alreadyOpened = window.sessionStorage.getItem("anniversary-invitation-open") === "true";
+      alreadyOpened = window.sessionStorage.getItem(INVITATION_OPEN_KEY) === "true";
     } catch {
       alreadyOpened = false;
     }

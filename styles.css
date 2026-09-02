@@ -109,9 +109,11 @@ p {
   display: grid;
   align-content: center;
   justify-items: center;
+  overflow-y: auto;
   padding: 36px 24px;
   background: var(--plum-dark);
   color: var(--paper);
+  overscroll-behavior: contain;
   text-align: center;
   transition: opacity 360ms ease, visibility 360ms ease;
 }
@@ -158,21 +160,168 @@ p {
 
 .gate-button {
   display: grid;
-  min-width: min(310px, 88vw);
-  min-height: 66px;
-  place-content: center;
-  padding: 12px 28px;
-  border: 1px solid rgba(255, 253, 248, 0.72);
+  width: min(320px, 88vw);
+  justify-items: center;
+  padding: 0;
+  border: 0;
   background: transparent;
   color: var(--paper);
   cursor: pointer;
-  letter-spacing: 0.03em;
-  transition: background 160ms ease, color 160ms ease;
 }
 
-.gate-button:hover {
-  background: var(--paper);
-  color: var(--plum-dark);
+.gate-button:disabled,
+.gate-button[aria-disabled="true"] {
+  cursor: default;
+  opacity: 1;
+}
+
+.gate-button-label {
+  margin-top: 24px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid rgba(255, 253, 248, 0.62);
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  transition: opacity 240ms ease, transform 240ms ease;
+}
+
+.envelope-visual {
+  position: relative;
+  display: block;
+  width: 240px;
+  height: 156px;
+  perspective: 800px;
+  filter: drop-shadow(0 18px 24px rgba(10, 3, 7, 0.24));
+  transition: transform 220ms ease;
+}
+
+.gate-button:not(:disabled):not([aria-disabled="true"]):hover .envelope-visual {
+  transform: translateY(-4px);
+}
+
+.envelope-back,
+.envelope-card,
+.envelope-flap,
+.envelope-front,
+.envelope-seal {
+  position: absolute;
+  display: block;
+}
+
+.envelope-back {
+  inset: 24px 0 0;
+  z-index: 0;
+  border: 1px solid rgba(82, 40, 58, 0.22);
+  background: #d9c6a8;
+}
+
+.envelope-card {
+  top: 34px;
+  right: 18px;
+  left: 18px;
+  z-index: 2;
+  display: grid;
+  height: 112px;
+  align-content: center;
+  justify-items: center;
+  border: 1px solid rgba(82, 40, 58, 0.18);
+  background: #fffaf0;
+  color: var(--plum);
+  transform: translateY(0);
+  transition: transform 640ms cubic-bezier(0.22, 0.72, 0.2, 1);
+  transition-delay: 260ms;
+}
+
+.envelope-card strong {
+  font-family: var(--display);
+  font-size: 3.5rem;
+  font-weight: 400;
+  letter-spacing: -0.07em;
+  line-height: 0.76;
+}
+
+.envelope-card small {
+  margin-top: 9px;
+  font-size: 0.55rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.envelope-flap {
+  top: 24px;
+  right: 0;
+  left: 0;
+  z-index: 4;
+  height: 98px;
+  background: #eadbc3;
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+  transform: rotateX(0deg);
+  transform-origin: top center;
+}
+
+.envelope-front {
+  inset: 24px 0 0;
+  z-index: 3;
+  border: 1px solid rgba(82, 40, 58, 0.2);
+  background: #e2d0b4;
+  clip-path: polygon(0 16%, 50% 57%, 100% 16%, 100% 100%, 0 100%);
+}
+
+.envelope-seal {
+  top: 88px;
+  left: 50%;
+  z-index: 5;
+  display: grid;
+  width: 38px;
+  height: 38px;
+  place-items: center;
+  border: 1px solid rgba(255, 253, 248, 0.28);
+  border-radius: 50%;
+  background: var(--plum);
+  color: #d8b875;
+  font-family: var(--display);
+  font-size: 0.86rem;
+  transform: translateX(-50%);
+  transition: opacity 180ms ease, transform 180ms ease;
+}
+
+.invitation-gate.is-opening .envelope-flap {
+  animation: envelope-flap-open 620ms cubic-bezier(0.42, 0, 0.2, 1) forwards;
+}
+
+.invitation-gate.is-opening .envelope-card {
+  transform: translateY(-74px) rotate(-1deg);
+}
+
+.invitation-gate.is-opening .envelope-seal {
+  opacity: 0;
+  transform: translateX(-50%) scale(0.72);
+}
+
+.invitation-gate.is-opening .gate-button-label {
+  opacity: 0;
+  transform: translateY(8px);
+}
+
+@keyframes envelope-flap-open {
+  0% {
+    z-index: 4;
+    transform: rotateX(0deg);
+  }
+
+  49% {
+    z-index: 4;
+  }
+
+  50% {
+    z-index: 1;
+  }
+
+  100% {
+    z-index: 1;
+    transform: rotateX(180deg);
+  }
 }
 
 .site-header {
@@ -961,6 +1110,55 @@ footer {
 
   .rsvp-submit {
     width: 100%;
+  }
+}
+
+@media (max-height: 700px) {
+  .invitation-gate {
+    align-content: start;
+    padding-top: 24px;
+    padding-bottom: 24px;
+  }
+
+  .gate-year {
+    margin-bottom: 12px;
+  }
+
+  .gate-number {
+    font-size: 6.5rem;
+  }
+
+  .gate-title {
+    margin: 18px 0 22px;
+    font-size: 2rem;
+  }
+
+  .envelope-visual {
+    width: 216px;
+    height: 140px;
+  }
+
+  .envelope-back,
+  .envelope-front {
+    top: 22px;
+  }
+
+  .envelope-card {
+    top: 30px;
+    height: 100px;
+  }
+
+  .envelope-flap {
+    top: 22px;
+    height: 88px;
+  }
+
+  .envelope-seal {
+    top: 79px;
+  }
+
+  .gate-button-label {
+    margin-top: 18px;
   }
 }
 

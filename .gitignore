@@ -1,1 +1,8 @@
 .DS_Store
+private/
+*.private.csv
+*.links.csv
+*.supabase.csv
+supabase/invites.csv
+supabase/invites.generated.csv
+supabase/invite-links.csv

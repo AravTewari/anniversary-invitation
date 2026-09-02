@@ -1,67 +1,76 @@
 # Parul & Ashu's 25th Anniversary Invitation
 
-A mobile-first invitation that sends RSVP responses to Partiful. The site itself stores no guest data.
+A mobile-first invitation with a private RSVP form. GitHub Pages hosts the public site. Supabase stores the invitation list and responses.
 
-## Personalize the invitation
+## URLs
 
-Edit `site-config.js`. Set the couple's names, date, venue, message, dress code, timeline, RSVP deadline, and Partiful event URL.
+- Website: `https://aravtewari.github.io/anniversary-invitation/`
+- Repository: `https://github.com/AravTewari/anniversary-invitation`
+- General RSVP: the normal website URL
+- Personal RSVP: `https://aravtewari.github.io/anniversary-invitation/#invite=<private-token>`
 
-The Partiful link must be an HTTPS URL on `partiful.com`, for example:
+A personal link prefills the family name, available phone or email, and maximum party size. The guest still selects attendance and enters the number attending. A general link opens the same form without saved details.
 
-```js
-partifulUrl: "https://partiful.com/e/your-event-code",
+## Supabase setup
+
+1. Create one Supabase project.
+2. Open the SQL Editor and run `supabase/schema.sql` once.
+3. Import the private invitation CSV into the `rsvps` table.
+4. Copy the project URL and the **publishable** key into `site-config.js`.
+5. Test one personal link and one general response.
+
+Never put a Supabase secret key or service-role key in this repository. The publishable key is the only key intended for the browser.
+
+The database has row-level security enabled. Public visitors cannot read, update, or delete RSVP rows. They can use only the two token-aware database functions defined in `supabase/schema.sql`.
+
+## Guest-list import
+
+Start with a private CSV that has these columns:
+
+```csv
+family_label,max_party_size,expected_email,expected_phone,planning_status
+Example Family,4,example@example.com,+14085550123,Maybe
 ```
 
-To add a portrait:
+Generate stable private links:
 
-1. Put an optimized `.webp` or `.jpg` image in `assets/`.
-2. Set `photoUrl` to `"./assets/couple-photo.webp"`.
-3. Replace `photoAlt` with a short description of the photo.
+```sh
+node scripts/generate-invite-links.mjs private/expected-families.csv
+```
 
-If `partifulUrl` is empty, RSVP buttons stay on the page and show a clear "link coming soon" message. They never send guests to a placeholder event.
+The script writes:
 
-## Personalized links
+- `expected-families.supabase.csv` for the Supabase table import
+- `expected-families.links.csv` for the hosts to distribute
 
-The `family` URL fragment changes the greeting:
+Both files contain private information. Keep them outside Git and share them only with the hosts.
+
+## Organizer view
+
+Use the Supabase Table Editor or the `organizer_rsvp_status` view. The view shows expected families, pending responses, attendance, party size, contact details, notes, and campaign consent.
+
+Do not build or publish an organizer page. Supabase is the private admin surface for this one event.
+
+## Site settings
+
+Edit `site-config.js` for the couple's names, date, venue, schedule, photo, and public RSVP connection. Do not add guest names or phone numbers to that file.
+
+Legacy display-only family links still work:
 
 ```text
 https://aravtewari.github.io/anniversary-invitation/#family=Ashu%20%26%20Family
 ```
 
-The older query format also works, but the fragment format is preferred because it keeps the family name out of normal server request logs. The value is display text only. It is not a password and it does not control Partiful access.
+Use token links for real personalized RSVPs. Family-name links are not private and do not select a saved invitation record.
 
-## Preview locally
+## Local preview
 
-Run a static file server in this folder. For example:
+Run a static server in this folder:
 
 ```sh
 python3 -m http.server 4173
 ```
 
-Then open `http://localhost:4173/#family=Ashu%20%26%20Family`.
+Then open `http://127.0.0.1:4173/`.
 
-## GitHub Pages
-
-- Repository: `https://github.com/AravTewari/anniversary-invitation`
-- Website: `https://aravtewari.github.io/anniversary-invitation/`
-- Every push to `main` publishes through the included GitHub Actions workflow.
-
-The canonical URL and social-sharing image metadata are already set to the public website.
-
-Do not add a guest spreadsheet, phone numbers, email addresses, or private Partiful exports to this repository.
-
-## Partiful configuration
-
-- Event title: `Parul & Ashu's 25th Wedding Anniversary`
-- Date and time: December 20, 2026 at 5:30 PM Pacific Time
-- Venue: Royale Sakoon, Fremont
-- Additional guests: up to six, with names required
-- Required questions: full name, email, and mobile phone
-- Optional questions: dietary or accessibility needs, email consent, and SMS consent
-- Discoverability: Partiful shows the event as Private, but anyone with the link can open it because no password is set.
-
-Before sending invitations:
-
-- Add each organizer as a cohost.
-- Invite guests directly through Partiful if you need to remind people who have not responded.
-- Submit one test RSVP, export the CSV, and send one test message before launch.
+Every push to `main` publishes through the GitHub Pages workflow.

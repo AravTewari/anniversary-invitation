@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta
       http-equiv="Content-Security-Policy"
-      content="default-src 'self'; script-src 'self'; style-src 'self'; font-src 'self'; img-src 'self' data: https:; connect-src 'none'; object-src 'none'; frame-src 'none'; base-uri 'none'; form-action 'none'; upgrade-insecure-requests"
+      content="default-src 'self'; script-src 'self'; style-src 'self'; font-src 'self'; img-src 'self' data: https:; connect-src 'self' https://*.supabase.co; object-src 'none'; frame-src 'none'; base-uri 'none'; form-action 'none'; upgrade-insecure-requests"
     />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#4a2032" />
@@ -98,8 +98,8 @@
             </p>
             <div class="hero-actions">
               <a class="button button-primary" href="#rsvp" data-rsvp-link>
-                RSVP on Partiful
-                <span aria-hidden="true">↗</span>
+                RSVP now
+                <span aria-hidden="true">↓</span>
               </a>
               <a class="text-link" href="#details">View celebration details <span aria-hidden="true">↓</span></a>
             </div>
@@ -215,18 +215,117 @@
       <section class="rsvp section" id="rsvp" aria-labelledby="rsvp-title">
         <div class="rsvp-card reveal">
           <div class="rsvp-rings" aria-hidden="true"><i></i><i></i></div>
-          <p class="eyebrow eyebrow-light">Kindly reply</p>
-          <h2 id="rsvp-title">Will you celebrate with us?</h2>
-          <p data-config="rsvpDeadline">Please reply on Partiful.</p>
-          <a class="button button-light" href="" data-rsvp-link>
-            Continue to Partiful <span aria-hidden="true">↗</span>
-          </a>
-          <p class="rsvp-status" id="rsvp-status" role="status" hidden>
-            The host is adding the private RSVP link. Please check back soon.
-          </p>
+          <div class="rsvp-heading">
+            <p class="eyebrow eyebrow-light">Kindly reply</p>
+            <h2 id="rsvp-title">Will you celebrate with us?</h2>
+            <p data-config="rsvpDeadline">Please reply as soon as you can.</p>
+          </div>
+
+          <div class="invite-context" id="invite-context" hidden>
+            <span id="invite-context-copy"></span>
+            <button id="use-general-form" type="button">This is not my invitation</button>
+          </div>
+
+          <form class="rsvp-form" id="rsvp-form">
+            <div class="form-grid">
+              <div class="form-field form-field-wide">
+                <label for="response-name">Your name or family name</label>
+                <input
+                  id="response-name"
+                  name="name"
+                  type="text"
+                  maxlength="120"
+                  autocomplete="name"
+                  placeholder="Ashu &amp; Family"
+                  required
+                />
+              </div>
+
+              <fieldset class="form-field form-field-wide attendance-field">
+                <legend>Will you attend?</legend>
+                <div class="attendance-options">
+                  <label>
+                    <input type="radio" name="attending" value="yes" required />
+                    <span>Joyfully accepts</span>
+                  </label>
+                  <label>
+                    <input type="radio" name="attending" value="no" />
+                    <span>Regretfully declines</span>
+                  </label>
+                </div>
+              </fieldset>
+
+              <div class="form-field form-field-wide" id="party-size-field" hidden>
+                <label for="party-size">Number attending</label>
+                <input id="party-size" name="partySize" type="number" min="1" max="7" inputmode="numeric" />
+                <small id="party-size-hint">Include yourself. Up to 7 guests.</small>
+              </div>
+
+              <div class="form-field">
+                <label for="response-email">Email</label>
+                <input
+                  id="response-email"
+                  name="email"
+                  type="email"
+                  maxlength="254"
+                  autocomplete="email"
+                  placeholder="you@example.com"
+                />
+              </div>
+
+              <div class="form-field">
+                <label for="response-phone">Mobile phone</label>
+                <input
+                  id="response-phone"
+                  name="phone"
+                  type="tel"
+                  maxlength="32"
+                  autocomplete="tel"
+                  placeholder="(408) 555-0123"
+                />
+              </div>
+
+              <p class="contact-requirement form-field-wide">Please provide at least one: email or mobile phone.</p>
+
+              <div class="form-field">
+                <label for="dietary-notes">Dietary or accessibility needs <span>Optional</span></label>
+                <textarea id="dietary-notes" name="dietaryNotes" maxlength="500" rows="4"></textarea>
+              </div>
+
+              <div class="form-field">
+                <label for="guest-message">Message for the hosts <span>Optional</span></label>
+                <textarea id="guest-message" name="message" maxlength="1000" rows="4"></textarea>
+              </div>
+            </div>
+
+            <div class="consent-options">
+              <label>
+                <input id="email-opt-in" name="emailOptIn" type="checkbox" />
+                <span>Email me important updates about this celebration.</span>
+              </label>
+              <label>
+                <input id="sms-opt-in" name="smsOptIn" type="checkbox" />
+                <span>
+                  Text me important updates about this celebration. Message and data rates may apply.
+                  Reply STOP to opt out.
+                </span>
+              </label>
+            </div>
+
+            <div class="form-trap" aria-hidden="true">
+              <label for="website">Leave this field empty</label>
+              <input id="website" name="website" type="text" tabindex="-1" autocomplete="off" />
+            </div>
+
+            <button class="button button-light rsvp-submit" id="rsvp-submit" type="submit">
+              Send RSVP <span aria-hidden="true">→</span>
+            </button>
+          </form>
+
+          <p class="rsvp-status" id="rsvp-status" role="status" aria-live="polite" hidden></p>
           <p class="rsvp-disclosure">
-            Partiful will collect and manage your RSVP and the contact details you choose to provide.
-            Read <a href="https://partiful.com/privacy" rel="noopener noreferrer">Partiful's privacy policy</a>.
+            Your response is private and available only to the celebration hosts. We use your contact details
+            only to manage this event and the updates you request.
           </p>
         </div>
       </section>
@@ -246,7 +345,7 @@
 
     <noscript>
       <div class="noscript-notice">
-        This invitation needs JavaScript for personalization. Please ask the host for the direct Partiful link.
+        This invitation needs JavaScript for personalization and RSVP. Please contact the host to reply.
       </div>
     </noscript>
   </body>

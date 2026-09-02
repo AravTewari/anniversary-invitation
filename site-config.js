@@ -1,5 +1,4 @@
-// Edit only this file to personalize the invitation.
-// The Partiful URL is connected. Complete the remaining launch details below.
+// Public invitation settings. Never put a Supabase secret or service-role key here.
 window.INVITATION_CONFIG = Object.freeze({
   couple: {
     partner1: "Parul",
@@ -18,30 +17,76 @@ window.INVITATION_CONFIG = Object.freeze({
   venueName: "Royale Sakoon, Fremont",
   venueAddress: "5200 Mowry Ave, Fremont, CA 94538",
   mapsUrl: "https://www.google.com/maps/search/?api=1&query=5200%20Mowry%20Ave%2C%20Fremont%2C%20CA%2094538",
-  calendarUrl: "https://storage.googleapis.com/download/storage/v1/b/getpartiful.appspot.com/o/public%2Fevents%2FM7Qvi14QaCeUaWv7q8MY%2Fevent.ics?generation=1788313083755600&alt=media",
+  calendarUrl: "",
   cityLabel: "Fremont, California",
   dressCode: "Festive elegance with a touch of silver, champagne, or rose.",
-  rsvpDeadline: "Please reply on Partiful.",
-  partifulUrl: "https://partiful.com/e/M7Qvi14QaCeUaWv7q8MY",
+  rsvpDeadline: "Please reply as soon as you can.",
+  rsvp: {
+    supabaseUrl: "https://bcmxwtlfndvdsbiwaams.supabase.co",
+    publishableKey: "sb_publishable_YBNp_63wWgcBLwgF_Rm9aw_S0_pCM5V",
+    lookupFunction: "get_invite",
+    submitFunction: "submit_rsvp",
+    generalMaxPartySize: 7,
+  },
   photoUrl: "./assets/anniversary-artwork.png",
   photoAlt: "Gold wedding rings framed by burgundy and blush flowers",
   hostedBy: "Hosted with love by Arav and family",
   contactText: "Questions? Please contact Arav or the host who shared this invitation.",
   timeline: [
     {
-      time: "Welcome",
-      title: "Cocktails & Conversation",
-      description: "Arrive, reconnect, and raise the first glass to twenty-five wonderful years.",
+      time: "6:00–6:30",
+      title: "Guest arrival, cocktails & live music",
+      description: "30 minutes",
     },
     {
-      time: "Celebrate",
-      title: "Stories & Anniversary Toast",
-      description: "A few cherished memories, a milestone toast, and a celebration of the happy couple.",
+      time: "6:30–6:40",
+      title: "Grand entrance",
+      description: "10 minutes",
     },
     {
-      time: "Together",
-      title: "Dinner & Dancing",
-      description: "An evening of good food, music, and the people who made the journey special.",
+      time: "6:40–6:50",
+      title: "Welcome by MC",
+      description: "10 minutes",
+    },
+    {
+      time: "6:50–7:05",
+      title: "Family slideshow and video",
+      description: "15 minutes",
+    },
+    {
+      time: "7:05–7:25",
+      title: "Kids and family dance performance",
+      description: "20 minutes",
+    },
+    {
+      time: "7:25–7:40",
+      title: "Interactive game with guests",
+      description: "15 minutes",
+    },
+    {
+      time: "7:40–8:00",
+      title: "Couple story and speeches",
+      description: "20 minutes",
+    },
+    {
+      time: "8:00–8:20",
+      title: "Professional dance and singing performance",
+      description: "20 minutes",
+    },
+    {
+      time: "8:20–8:35",
+      title: "Couple dance and open dance floor",
+      description: "15 minutes",
+    },
+    {
+      time: "8:35–8:50",
+      title: "Cake cutting and champagne toast",
+      description: "15 minutes",
+    },
+    {
+      time: "8:50–9:00",
+      title: "Dinner announcement",
+      description: "10 minutes",
     },
   ],
 });

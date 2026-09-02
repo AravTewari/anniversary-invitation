@@ -281,58 +281,35 @@
 
   function setupBackgroundMusic() {
     const audio = $("#background-music");
-    const toggle = $("#music-toggle");
-    const label = $("#music-toggle-label");
-    const preferenceKey = "anniversary-music-paused";
-    let userPaused = false;
+    const initialVolume = 0.16;
+    const fadeStart = 42;
+    const fadeEnd = 50;
 
-    try {
-      userPaused = window.sessionStorage.getItem(preferenceKey) === "true";
-    } catch {
-      userPaused = false;
-    }
+    audio.addEventListener("timeupdate", () => {
+      if (audio.currentTime < fadeStart) return;
+      const progress = Math.min(1, (audio.currentTime - fadeStart) / (fadeEnd - fadeStart));
+      audio.volume = initialVolume * (1 - progress);
 
-    audio.volume = 0.18;
-
-    function savePreference(paused) {
-      userPaused = paused;
-      try {
-        window.sessionStorage.setItem(preferenceKey, String(paused));
-      } catch {
-        // Storage can be unavailable in private browsing. The music control still works.
-      }
-    }
-
-    function updateControl() {
-      const isPlaying = !audio.paused;
-      toggle.setAttribute("aria-pressed", String(isPlaying));
-      toggle.setAttribute("aria-label", isPlaying ? "Pause background music" : "Play background music");
-      label.textContent = isPlaying ? "Music on" : "Music off";
-    }
-
-    function play() {
-      return audio.play().catch(() => {
-        updateControl();
-      });
-    }
-
-    toggle.addEventListener("click", () => {
-      if (audio.paused) {
-        savePreference(false);
-        play();
-      } else {
-        savePreference(true);
+      if (progress === 1) {
         audio.pause();
+        audio.currentTime = 0;
+        audio.volume = initialVolume;
       }
     });
-    audio.addEventListener("play", updateControl);
-    audio.addEventListener("pause", updateControl);
-    updateControl();
+
+    function play() {
+      audio.currentTime = 0;
+      audio.volume = initialVolume;
+
+      try {
+        Promise.resolve(audio.play()).catch(() => {});
+      } catch {
+        // Playback can be blocked by the browser. The invitation still works.
+      }
+    }
 
     return {
-      start() {
-        if (!userPaused) play();
-      },
+      start: play,
     };
   }
 

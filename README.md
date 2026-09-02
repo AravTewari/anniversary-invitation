@@ -77,6 +77,6 @@ Every push to `main` publishes through the GitHub Pages workflow.
 
 ## Music credit
 
-The site includes `assets/summer-rain.mp3`. The invitation-open action starts it at low volume, and guests can pause or resume it from the header.
+The site includes `assets/pran-chai-piano.mp3`. Opening the invitation starts it at low volume. Playback fades out after 42 seconds and stops after 50 seconds.
 
-“Summer Rain” © 2016 by [Shane Ivers](https://www.silvermansound.com/free-music/summer-rain) is licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). No changes were made to the track.
+“Pran chai chokkhu na chay (Rabindra Sangeet) on Piano” by [Paramanu Sarkar](https://commons.wikimedia.org/wiki/File:Pran_chai_chokkhu_na_chay_(Rabindra_Sangeet)_on_Piano_by_Paramanu_Sarkar.ogg) is licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). The composition is by Rabindranath Tagore. This site uses Wikimedia Commons' MP3 transcode of the source OGG with no editorial changes. The browser controls playback volume.

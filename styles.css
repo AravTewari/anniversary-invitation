@@ -175,21 +175,6 @@ p {
   color: var(--plum-dark);
 }
 
-.gate-button small {
-  margin-top: 2px;
-  font-size: 0.65rem;
-  letter-spacing: 0.14em;
-  opacity: 0.64;
-  text-transform: uppercase;
-}
-
-.gate-note {
-  max-width: 350px;
-  margin: 16px 0 0;
-  color: rgba(255, 253, 248, 0.54);
-  font-size: 0.72rem;
-}
-
 .site-header {
   position: fixed;
   top: 0;
@@ -251,26 +236,6 @@ p {
 .site-header .nav-rsvp {
   padding-bottom: 3px;
   border-bottom: 1px solid currentColor;
-}
-
-.music-toggle {
-  display: inline-flex;
-  min-height: 40px;
-  align-items: center;
-  gap: 7px;
-  padding: 8px 12px;
-  border: 1px solid var(--line);
-  background: transparent;
-  color: var(--plum);
-  cursor: pointer;
-  font-size: 0.7rem;
-  font-weight: 700;
-}
-
-.music-toggle[aria-pressed="true"] {
-  border-color: var(--plum);
-  background: var(--plum);
-  color: var(--paper);
 }
 
 .hero {
@@ -852,16 +817,6 @@ footer {
   letter-spacing: 0.18em;
 }
 
-.music-credit {
-  margin: 26px auto 0;
-  color: #887a7e;
-  font-size: 0.63rem;
-}
-
-.music-credit a {
-  text-underline-offset: 3px;
-}
-
 .noscript-notice {
   position: fixed;
   right: 12px;
@@ -945,15 +900,6 @@ footer {
   }
 
   .site-header nav > a:not(.nav-rsvp) {
-    display: none;
-  }
-
-  .music-toggle {
-    min-height: 38px;
-    padding: 7px 10px;
-  }
-
-  .music-toggle #music-toggle-label {
     display: none;
   }
 
@@ -1042,7 +988,6 @@ footer {
   .invitation-gate,
   .site-header,
   .hero-actions,
-  .music-toggle,
   audio {
     display: none !important;
   }

@@ -7,9 +7,9 @@ window.INVITATION_CONFIG = Object.freeze({
   yearsTogether: 25,
   weddingYear: 2001,
   celebrationYear: 2026,
-  eventTitle: "Parul & Ashu's Silver Jubilee",
+  eventTitle: "Twenty-five years together",
   invitationMessage:
-    "Together with our family, we invite you to celebrate twenty-five years of love, laughter, friendship, and shared memories.",
+    "Please join our family for dinner, dancing, and a celebration of twenty-five years together.",
   defaultFamily: "Family & Friends",
   dateLabel: "Sunday, December 20, 2026",
   timeLabel: "5:30 PM Pacific Time",
@@ -19,7 +19,7 @@ window.INVITATION_CONFIG = Object.freeze({
   mapsUrl: "https://www.google.com/maps/search/?api=1&query=5200%20Mowry%20Ave%2C%20Fremont%2C%20CA%2094538",
   calendarUrl: "",
   cityLabel: "Fremont, California",
-  dressCode: "Festive elegance with a touch of silver, champagne, or rose.",
+  dressCode: "Festive Indian or cocktail attire; silver, champagne, and rose are welcome.",
   rsvpDeadline: "Please reply as soon as you can.",
   rsvp: {
     supabaseUrl: "https://bcmxwtlfndvdsbiwaams.supabase.co",
@@ -34,59 +34,19 @@ window.INVITATION_CONFIG = Object.freeze({
   contactText: "Questions? Please contact Arav or the host who shared this invitation.",
   timeline: [
     {
-      time: "6:00–6:30",
-      title: "Guest arrival, cocktails & live music",
-      description: "30 minutes",
+      time: "6:00 PM",
+      title: "Welcome and cocktails",
+      description: "",
     },
     {
-      time: "6:30–6:40",
-      title: "Grand entrance",
-      description: "10 minutes",
+      time: "7:00 PM",
+      title: "Celebration program",
+      description: "",
     },
     {
-      time: "6:40–6:50",
-      title: "Welcome by MC",
-      description: "10 minutes",
-    },
-    {
-      time: "6:50–7:05",
-      title: "Family slideshow and video",
-      description: "15 minutes",
-    },
-    {
-      time: "7:05–7:25",
-      title: "Kids and family dance performance",
-      description: "20 minutes",
-    },
-    {
-      time: "7:25–7:40",
-      title: "Interactive game with guests",
-      description: "15 minutes",
-    },
-    {
-      time: "7:40–8:00",
-      title: "Couple story and speeches",
-      description: "20 minutes",
-    },
-    {
-      time: "8:00–8:20",
-      title: "Professional dance and singing performance",
-      description: "20 minutes",
-    },
-    {
-      time: "8:20–8:35",
-      title: "Couple dance and open dance floor",
-      description: "15 minutes",
-    },
-    {
-      time: "8:35–8:50",
-      title: "Cake cutting and champagne toast",
-      description: "15 minutes",
-    },
-    {
-      time: "8:50–9:00",
-      title: "Dinner announcement",
-      description: "10 minutes",
+      time: "8:30 PM",
+      title: "Dinner, cake, and dancing",
+      description: "",
     },
   ],
 });

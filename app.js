@@ -202,7 +202,6 @@
       "contactText",
     ].forEach((key) => setText(`[data-config="${key}"]`, config[key]));
 
-    $("#months-together").textContent = String(Number(config.yearsTogether || 0) * 12);
     document.title = `${config.yearsTogether} Years of Love | ${config.couple.partner1} & ${config.couple.partner2}`;
   }
 
@@ -268,20 +267,80 @@
       const title = document.createElement("h3");
       title.textContent = cleanText(item.title);
 
-      const description = document.createElement("p");
-      description.textContent = cleanText(item.description);
-
-      content.append(title, description);
+      content.append(title);
+      const descriptionText = cleanText(item.description);
+      if (descriptionText) {
+        const description = document.createElement("p");
+        description.textContent = descriptionText;
+        content.append(description);
+      }
       row.append(time, content);
       timeline.append(row);
     });
   }
 
-  function setupInvitationGate() {
+  function setupBackgroundMusic() {
+    const audio = $("#background-music");
+    const toggle = $("#music-toggle");
+    const label = $("#music-toggle-label");
+    const preferenceKey = "anniversary-music-paused";
+    let userPaused = false;
+
+    try {
+      userPaused = window.sessionStorage.getItem(preferenceKey) === "true";
+    } catch {
+      userPaused = false;
+    }
+
+    audio.volume = 0.18;
+
+    function savePreference(paused) {
+      userPaused = paused;
+      try {
+        window.sessionStorage.setItem(preferenceKey, String(paused));
+      } catch {
+        // Storage can be unavailable in private browsing. The music control still works.
+      }
+    }
+
+    function updateControl() {
+      const isPlaying = !audio.paused;
+      toggle.setAttribute("aria-pressed", String(isPlaying));
+      toggle.setAttribute("aria-label", isPlaying ? "Pause background music" : "Play background music");
+      label.textContent = isPlaying ? "Music on" : "Music off";
+    }
+
+    function play() {
+      return audio.play().catch(() => {
+        updateControl();
+      });
+    }
+
+    toggle.addEventListener("click", () => {
+      if (audio.paused) {
+        savePreference(false);
+        play();
+      } else {
+        savePreference(true);
+        audio.pause();
+      }
+    });
+    audio.addEventListener("play", updateControl);
+    audio.addEventListener("pause", updateControl);
+    updateControl();
+
+    return {
+      start() {
+        if (!userPaused) play();
+      },
+    };
+  }
+
+  function setupInvitationGate(onOpen) {
     const gate = $("#invitation-gate");
     const openButton = $("#open-invitation");
     const main = $("#main-content");
-    const backgroundElements = [$("#site-header"), main, $("footer"), $("#mobile-rsvp")];
+    const backgroundElements = [$("#site-header"), main, $("footer")].filter(Boolean);
 
     function setBackgroundInert(isInert) {
       backgroundElements.forEach((element) => {
@@ -305,7 +364,7 @@
       window.setTimeout(() => {
         gate.hidden = true;
         if (shouldFocus) main.focus({ preventScroll: true });
-      }, 720);
+      }, 380);
     }
 
     let alreadyOpened = false;
@@ -329,7 +388,10 @@
       event.preventDefault();
       openButton.focus({ preventScroll: true });
     });
-    openButton.addEventListener("click", () => openInvitation(true));
+    openButton.addEventListener("click", () => {
+      onOpen();
+      openInvitation(true);
+    });
   }
 
   function setupHeader() {
@@ -358,66 +420,6 @@
     );
 
     items.forEach((item) => observer.observe(item));
-  }
-
-  function setupMobileRsvp() {
-    const bar = $("#mobile-rsvp");
-    if (!("IntersectionObserver" in window)) {
-      bar.hidden = false;
-      return;
-    }
-
-    const hero = $("#top");
-    const finalRsvp = $("#rsvp");
-    let heroVisible = true;
-    let finalVisible = false;
-
-    const update = () => {
-      bar.hidden = heroVisible || finalVisible;
-    };
-
-    new IntersectionObserver(([entry]) => {
-      heroVisible = entry.isIntersecting;
-      update();
-    }, { threshold: 0.08 }).observe(hero);
-
-    new IntersectionObserver(([entry]) => {
-      finalVisible = entry.isIntersecting;
-      update();
-    }, { threshold: 0.08 }).observe(finalRsvp);
-  }
-
-  function setupCountdown() {
-    if (!config.eventStart) return;
-
-    const start = new Date(config.eventStart);
-    if (Number.isNaN(start.getTime())) return;
-
-    const countdown = $("#countdown");
-    countdown.hidden = false;
-
-    const fields = {
-      days: $("#countdown-days"),
-      hours: $("#countdown-hours"),
-      minutes: $("#countdown-minutes"),
-      seconds: $("#countdown-seconds"),
-    };
-
-    let timer = null;
-
-    function tick() {
-      const difference = Math.max(0, start.getTime() - Date.now());
-      const totalSeconds = Math.floor(difference / 1000);
-      fields.days.textContent = String(Math.floor(totalSeconds / 86400)).padStart(2, "0");
-      fields.hours.textContent = String(Math.floor((totalSeconds % 86400) / 3600)).padStart(2, "0");
-      fields.minutes.textContent = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, "0");
-      fields.seconds.textContent = String(totalSeconds % 60).padStart(2, "0");
-
-      if (difference === 0 && timer !== null) window.clearInterval(timer);
-    }
-
-    tick();
-    if (start.getTime() > Date.now()) timer = window.setInterval(tick, 1000);
   }
 
   async function setupRsvpForm(initialFamily, capturedInvite) {
@@ -642,11 +644,10 @@
   const initialFamily = applyPersonalization();
   applyPhoto();
   renderTimeline();
-  setupInvitationGate();
+  const backgroundMusic = setupBackgroundMusic();
+  setupInvitationGate(backgroundMusic.start);
   setupHeader();
   applyExternalLinks();
   setupRevealAnimations();
-  setupMobileRsvp();
-  setupCountdown();
   setupRsvpForm(initialFamily, capturedInvite);
 })();

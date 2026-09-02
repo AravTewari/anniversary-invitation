@@ -74,3 +74,9 @@ python3 -m http.server 4173
 Then open `http://127.0.0.1:4173/`.
 
 Every push to `main` publishes through the GitHub Pages workflow.
+
+## Music credit
+
+The site includes `assets/summer-rain.mp3`. The invitation-open action starts it at low volume, and guests can pause or resume it from the header.
+
+“Summer Rain” © 2016 by [Shane Ivers](https://www.silvermansound.com/free-music/summer-rain) is licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). No changes were made to the track.

@@ -320,11 +320,11 @@ revoke all on function public.submit_rsvp(
   text, text, boolean, boolean, text
 ) from public;
 
-grant execute on function public.get_invite(text) to anon, authenticated;
+grant execute on function public.get_invite(text) to anon;
 grant execute on function public.submit_rsvp(
   text, text, text, text, boolean, integer,
   text, text, boolean, boolean, text
-) to anon, authenticated;
+) to anon;
 
 create view public.organizer_rsvp_status
 with (security_invoker = true)

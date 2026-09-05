@@ -28,8 +28,8 @@ window.INVITATION_CONFIG = Object.freeze({
     submitFunction: "submit_rsvp",
     generalMaxPartySize: 7,
   },
-  photoUrl: "./assets/anniversary-artwork.png",
-  photoAlt: "Gold wedding rings framed by burgundy and blush flowers",
+  photoUrl: "./assets/parul-ashu.jpg",
+  photoAlt: "Parul and Ashu smiling together beneath a floral arch",
   hostedBy: "Hosted with love by Arav and family",
   contactText: "Questions? Please contact Arav or the host who shared this invitation.",
   timeline: [

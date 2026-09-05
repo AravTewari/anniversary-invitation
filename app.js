@@ -3,7 +3,6 @@
 
   const config = window.INVITATION_CONFIG;
   const INVITE_TOKEN_KEY = "anniversary-rsvp-token";
-  const INVITATION_OPEN_KEY = "anniversary-invitation-open-v2";
 
   if (!config) {
     document.body.classList.remove("is-locked");
@@ -84,7 +83,10 @@
 
   function setupPrivateAnchorNavigation() {
     document.addEventListener("click", (event) => {
-      if (!readSessionToken()) return;
+      const hashParams = new URLSearchParams(window.location.hash.slice(1));
+      const queryParams = new URLSearchParams(window.location.search);
+      const hasFamily = cleanText(hashParams.get("family") ?? queryParams.get("family")) !== "";
+      if (!readSessionToken() && !hasFamily) return;
 
       const link = event.target instanceof Element ? event.target.closest('a[href^="#"]') : null;
       if (!link) return;
@@ -338,12 +340,6 @@
       openButton.setAttribute("aria-disabled", "true");
       gate.classList.add("is-opening");
 
-      try {
-        window.sessionStorage.setItem(INVITATION_OPEN_KEY, "true");
-      } catch {
-        // Storage can be unavailable in private browsing. The invitation still works.
-      }
-
       window.setTimeout(() => {
         gate.classList.add("is-open");
 
@@ -354,20 +350,6 @@
           if (shouldFocus) main.focus({ preventScroll: true });
         }, fadeDuration);
       }, openingDuration);
-    }
-
-    let alreadyOpened = false;
-    try {
-      alreadyOpened = window.sessionStorage.getItem(INVITATION_OPEN_KEY) === "true";
-    } catch {
-      alreadyOpened = false;
-    }
-
-    if (alreadyOpened) {
-      gate.hidden = true;
-      document.body.classList.remove("is-locked");
-      setBackgroundInert(false);
-      return;
     }
 
     setBackgroundInert(true);

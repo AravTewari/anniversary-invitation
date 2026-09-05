@@ -11,6 +11,8 @@ A mobile-first invitation with a private RSVP form. GitHub Pages hosts the publi
 
 A personal link prefills the family name, available phone or email, and maximum party size. The guest still selects attendance and enters the number attending. A general link opens the same form without saved details.
 
+Personal links stay in the address bar during in-page navigation. Refreshing the page reloads the same family details and shows the envelope again.
+
 ## Supabase setup
 
 1. Create one Supabase project.
@@ -75,8 +77,6 @@ Then open `http://127.0.0.1:4173/`.
 
 Every push to `main` publishes through the GitHub Pages workflow.
 
-## Music credit
+## Music
 
-The site includes `assets/pran-chai-piano.mp3`. Opening the invitation starts it at low volume. Playback fades out after 42 seconds and stops after 50 seconds.
-
-“Pran chai chokkhu na chay (Rabindra Sangeet) on Piano” by [Paramanu Sarkar](https://commons.wikimedia.org/wiki/File:Pran_chai_chokkhu_na_chay_(Rabindra_Sangeet)_on_Piano_by_Paramanu_Sarkar.ogg) is licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). The composition is by Rabindranath Tagore. This site uses Wikimedia Commons' MP3 transcode of the source OGG with no editorial changes. The browser controls playback volume.
+The site includes the host-provided `assets/manwa-laage-guitar.mp3`. Opening the invitation starts it at low volume. Playback fades out after 42 seconds and stops after 50 seconds.

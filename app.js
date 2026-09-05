@@ -406,7 +406,6 @@
     const partySizeField = $("#party-size-field");
     const partySizeInput = $("#party-size");
     const partySizeHint = $("#party-size-hint");
-    const emailOptIn = $("#email-opt-in");
     const smsOptIn = $("#sms-opt-in");
     const api = getRsvpApiConfig();
     const generalMax = clampInteger(config.rsvp?.generalMaxPartySize, 1, 7, 7);
@@ -453,7 +452,6 @@
       phoneInput.value = cleanText(values.phone);
       $("#dietary-notes").value = typeof values.dietaryNotes === "string" ? values.dietaryNotes.slice(0, 500) : "";
       $("#guest-message").value = typeof values.message === "string" ? values.message.slice(0, 1000) : "";
-      emailOptIn.checked = Boolean(values.emailOptIn);
       smsOptIn.checked = Boolean(values.smsOptIn);
       setAttendance(typeof values.attending === "boolean" ? values.attending : null);
       if (values.attending === true && Number.isFinite(Number(values.partySize))) {
@@ -467,10 +465,6 @@
 
       if (!emailInput.value.trim() && !phoneInput.value.trim()) {
         emailInput.setCustomValidity("Enter an email address or mobile phone number.");
-        return false;
-      }
-      if (emailOptIn.checked && !emailInput.value.trim()) {
-        emailInput.setCustomValidity("Enter an email address to receive email updates.");
         return false;
       }
       if (smsOptIn.checked && !phoneInput.value.trim()) {
@@ -505,7 +499,7 @@
     $$('input[name="attending"]', form).forEach((radio) => {
       radio.addEventListener("change", () => setAttendance(radio.value === "yes"));
     });
-    [emailInput, phoneInput, emailOptIn, smsOptIn].forEach((element) => {
+    [emailInput, phoneInput, smsOptIn].forEach((element) => {
       element.addEventListener("input", () => {
         emailInput.setCustomValidity("");
         phoneInput.setCustomValidity("");
@@ -568,7 +562,7 @@
         p_party_size: attending ? Number.parseInt(partySizeInput.value, 10) : 0,
         p_dietary_notes: $("#dietary-notes").value,
         p_message: $("#guest-message").value,
-        p_email_opt_in: emailOptIn.checked,
+        p_email_opt_in: false,
         p_sms_opt_in: smsOptIn.checked,
         p_website: $("#website").value,
       };

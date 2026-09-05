@@ -53,6 +53,67 @@ Use the Supabase Table Editor or the `organizer_rsvp_status` view. The view show
 
 Do not build or publish an organizer page. Supabase is the private admin surface for this one event.
 
+## RSVP alerts and Google Sheets
+
+The notification flow is:
+
+```text
+Supabase rsvps insert/update -> rsvp-notify Edge Function -> Google Apps Script + host SMS
+```
+
+1. Open the planning spreadsheet and add a bound Apps Script project.
+2. Paste `google-apps-script/Code.gs` into the project.
+3. Reload the spreadsheet. Use **RSVP sync → Configure** and enter a long random shared secret and an optional host email.
+4. Deploy the Apps Script as a web app that executes as you and allows anyone to access it. Copy its `/exec` URL.
+5. Deploy both Supabase functions in `supabase/functions`.
+6. Set these Supabase Edge Function secrets:
+
+```text
+RSVP_WEBHOOK_SECRET
+GOOGLE_APPS_SCRIPT_URL
+GOOGLE_APPS_SCRIPT_SECRET
+HOST_PHONE_E164
+TWILIO_ACCOUNT_SID
+TWILIO_API_KEY
+TWILIO_API_SECRET
+TWILIO_MESSAGING_SERVICE_SID
+CAMPAIGN_ADMIN_SECRET
+```
+
+Use a Twilio API key and secret for the deployed functions. Do not use the account Auth Token in deployed code.
+
+Create a Supabase Database Webhook for `public.rsvps` on `INSERT` and `UPDATE`. Send it to:
+
+```text
+https://bcmxwtlfndvdsbiwaams.supabase.co/functions/v1/rsvp-notify
+```
+
+Add this HTTP header to the webhook:
+
+```text
+x-rsvp-webhook-secret: <the RSVP_WEBHOOK_SECRET value>
+```
+
+The Google script creates an `RSVP Responses` tab in the existing planning spreadsheet. It updates rows by the
+internal RSVP ID, so an edited response does not create a duplicate. The host receives a short SMS for each new or
+changed RSVP. Imported planning rows are ignored until a guest responds.
+
+## Guest SMS campaign
+
+Only guests who select the SMS checkbox and confirm that they will attend are included. Preview the audience first:
+
+```sh
+CAMPAIGN_ADMIN_SECRET=<secret> node scripts/send-sms-campaign.mjs --message "Dinner starts at 6 PM."
+```
+
+Send after the preview is correct:
+
+```sh
+CAMPAIGN_ADMIN_SECRET=<secret> node scripts/send-sms-campaign.mjs --message "Dinner starts at 6 PM." --send
+```
+
+The sender name and STOP instructions are added automatically.
+
 ## Site settings
 
 Edit `site-config.js` for the couple's names, date, venue, schedule, photo, and public RSVP connection. Do not add guest names or phone numbers to that file.

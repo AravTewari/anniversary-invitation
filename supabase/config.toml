@@ -1,0 +1,7 @@
+project_id = "anniversary-invitation"
+
+[functions.rsvp-notify]
+verify_jwt = false
+
+[functions.send-sms-campaign]
+verify_jwt = false

@@ -895,6 +895,41 @@ p {
   accent-color: var(--plum);
 }
 
+.consent-options a,
+.legal-page a {
+  color: var(--plum);
+  text-underline-offset: 3px;
+}
+
+.legal-page {
+  width: min(720px, calc(100% - 40px));
+  margin: 0 auto;
+  padding: 72px 0;
+}
+
+.legal-page h1 {
+  color: var(--plum);
+  font-family: var(--display);
+  font-size: clamp(2.5rem, 8vw, 4.8rem);
+  font-weight: 400;
+  line-height: 1;
+}
+
+.legal-page h2 {
+  margin-top: 36px;
+  color: var(--plum);
+  font-family: var(--display);
+  font-size: 1.8rem;
+  font-weight: 400;
+}
+
+.legal-back {
+  display: inline-block;
+  margin-bottom: 42px;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
 .form-trap {
   position: absolute;
   left: -10000px;

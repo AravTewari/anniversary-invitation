@@ -294,8 +294,8 @@
   function setupBackgroundMusic() {
     const audio = $("#background-music");
     const initialVolume = 0.16;
-    const fadeStart = 42;
-    const fadeEnd = 50;
+    const fadeStart = 52;
+    const fadeEnd = 60;
 
     audio.addEventListener("timeupdate", () => {
       if (audio.currentTime < fadeStart) return;

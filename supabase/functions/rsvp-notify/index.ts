@@ -45,12 +45,13 @@ Deno.serve(async (request: Request) => {
     const payload = (await request.json()) as DatabaseWebhook;
     if (!shouldProcessRsvpWebhook(payload)) return jsonResponse({ ok: true, ignored: true });
 
-    const hostPhone = normalizePhoneToE164(getRequiredEnv("HOST_PHONE_E164"));
-    if (!hostPhone) throw new Error("HOST_PHONE_E164 must use E.164 format.");
+    const hostPhones = [...new Set(getRequiredEnv("HOST_PHONES_E164").split(",").map(normalizePhoneToE164))];
+    if (hostPhones.some((phone) => !phone)) throw new Error("HOST_PHONES_E164 must contain valid comma-separated phone numbers.");
+    const message = hostRsvpMessage(payload.record);
 
     const jobs = [
       { name: "sheet", promise: updateGoogleSheet(payload) },
-      { name: "hostSms", promise: sendSms(hostPhone, hostRsvpMessage(payload.record)) },
+      ...hostPhones.map((phone, index) => ({ name: `hostSms${index + 1}`, promise: sendSms(phone, message) })),
     ];
     const results = await Promise.allSettled(jobs.map((job) => job.promise));
     const failed = results.flatMap((result, index) => (result.status === "rejected" ? [jobs[index].name] : []));

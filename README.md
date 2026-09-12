@@ -72,7 +72,7 @@ Supabase rsvps insert/update -> rsvp-notify Edge Function -> Google Apps Script 
 RSVP_WEBHOOK_SECRET
 GOOGLE_APPS_SCRIPT_URL
 GOOGLE_APPS_SCRIPT_SECRET
-HOST_PHONE_E164
+HOST_PHONES_E164
 TWILIO_ACCOUNT_SID
 TWILIO_API_KEY
 TWILIO_API_SECRET
@@ -95,7 +95,8 @@ x-rsvp-webhook-secret: <the RSVP_WEBHOOK_SECRET value>
 ```
 
 The Google script creates an `RSVP Responses` tab in the existing planning spreadsheet. It updates rows by the
-internal RSVP ID, so an edited response does not create a duplicate. The host receives a short SMS for each new or
+internal RSVP ID, so an edited response does not create a duplicate. Each host listed in the comma-separated
+`HOST_PHONES_E164` secret receives a separate short SMS for each new or
 changed RSVP. Imported planning rows are ignored until a guest responds.
 
 ## Guest SMS campaign

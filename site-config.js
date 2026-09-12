@@ -43,7 +43,7 @@ window.INVITATION_CONFIG = Object.freeze({
       title: "Celebration, program, and games",
     },
     {
-      title: "Dinner and dancing",
+      title: "Dinner and dance",
     },
   ],
 });

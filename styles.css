@@ -438,6 +438,15 @@ p {
   line-height: 1.6;
 }
 
+.anniversary-heading {
+  display: grid;
+  justify-items: center;
+  width: fit-content;
+  max-width: 100%;
+  margin-inline: auto;
+  text-align: center;
+}
+
 .anniversary-title {
   display: flex;
   align-items: baseline;

@@ -193,7 +193,6 @@
     setText('[data-config="celebrationYear"]', config.celebrationYear);
 
     [
-      "eventTitle",
       "invitationMessage",
       "dateLabel",
       "timeLabel",

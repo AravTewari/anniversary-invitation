@@ -100,7 +100,7 @@ changed RSVP. Imported planning rows are ignored until a guest responds.
 
 ## Guest SMS campaign
 
-Only guests who select the SMS checkbox and confirm that they will attend are included. Preview the audience first:
+The host confirmed that invited guests have already agreed to event texts. New or updated RSVPs with a phone number save SMS consent without a checkbox; email-only RSVPs do not. Existing records are not changed until a guest saves their RSVP. Campaigns include only attending guests with saved SMS consent. Twilio continues to block recipients who reply STOP. Preview the audience first:
 
 ```sh
 CAMPAIGN_ADMIN_SECRET=<secret> node scripts/send-sms-campaign.mjs --message "Dinner starts at 6 PM."

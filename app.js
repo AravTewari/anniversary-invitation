@@ -414,7 +414,6 @@
     const phoneInput = $("#response-phone");
     const partySizeField = $("#party-size-field");
     const partySizeInput = $("#party-size");
-    const smsOptIn = $("#sms-opt-in");
     const api = getRsvpApiConfig();
     const generalMax = clampInteger(config.rsvp?.generalMaxPartySize, 1, 7, 7);
     let currentToken = capturedInvite.token;
@@ -460,7 +459,6 @@
       phoneInput.value = formatPhone(values.phone);
       savedDietaryNotes = typeof values.dietaryNotes === "string" ? values.dietaryNotes : "";
       $("#guest-message").value = typeof values.message === "string" ? values.message.slice(0, 1000) : "";
-      smsOptIn.checked = Boolean(values.smsOptIn);
       setAttendance(typeof values.attending === "boolean" ? values.attending : null);
       if (values.attending === true && Number.isFinite(Number(values.partySize))) {
         partySizeInput.value = String(clampInteger(values.partySize, 1, currentMax, 1));
@@ -473,10 +471,6 @@
 
       if (!emailInput.value.trim() && !phoneInput.value.trim()) {
         emailInput.setCustomValidity("Enter an email address or mobile phone number.");
-        return false;
-      }
-      if (smsOptIn.checked && !phoneInput.value.trim()) {
-        phoneInput.setCustomValidity("Enter a mobile phone number to receive text updates.");
         return false;
       }
       return true;
@@ -508,7 +502,7 @@
     $$('input[name="attending"]', form).forEach((radio) => {
       radio.addEventListener("change", () => setAttendance(radio.value === "yes"));
     });
-    [emailInput, phoneInput, smsOptIn].forEach((element) => {
+    [emailInput, phoneInput].forEach((element) => {
       element.addEventListener("input", () => {
         emailInput.setCustomValidity("");
         phoneInput.setCustomValidity("");
@@ -595,7 +589,8 @@
         p_dietary_notes: savedDietaryNotes,
         p_message: $("#guest-message").value,
         p_email_opt_in: false,
-        p_sms_opt_in: smsOptIn.checked,
+        // The host confirmed that invited guests have already agreed to event texts.
+        p_sms_opt_in: Boolean(phoneInput.value.trim()),
         p_website: $("#website").value,
       };
 

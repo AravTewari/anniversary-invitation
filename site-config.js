@@ -30,8 +30,7 @@ window.INVITATION_CONFIG = Object.freeze({
   },
   photoUrl: "./assets/parul-ashu.jpg",
   photoAlt: "Parul and Ashu smiling together beneath a floral arch",
-  hostedBy: "Hosted with love by Arav and family",
-  contactText: "Questions? Please contact Arav or the host who shared this invitation.",
+  hostedBy: "Hosted with love by Arav and Avni",
   timeline: [
     {
       title: "Welcome and grand entry",

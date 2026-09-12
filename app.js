@@ -24,6 +24,22 @@
     });
   }
 
+  function formatPhone(value) {
+    const raw = cleanText(value);
+    const digits = raw.replace(/\D/g, "");
+    if (!digits) return raw === "+" ? "+" : "";
+    // Leave international numbers and extensions as entered.
+    if (/[a-z#]/i.test(raw) || (raw.startsWith("+") && !raw.startsWith("+1"))) return raw;
+    const hasCountryCode = digits.startsWith("1");
+    const national = hasCountryCode ? digits.slice(1) : digits;
+    if (national.length > 10) return raw;
+    const prefix = hasCountryCode ? "+1 " : "";
+    if (!national) return "+1";
+    if (national.length <= 3) return `${prefix}(${national}`;
+    if (national.length <= 6) return `${prefix}(${national.slice(0, 3)}) ${national.slice(3)}`;
+    return `${prefix}(${national.slice(0, 3)}) ${national.slice(3, 6)}-${national.slice(6)}`;
+  }
+
   function clampInteger(value, minimum, maximum, fallback) {
     const number = Number.parseInt(value, 10);
     if (!Number.isFinite(number)) return fallback;
@@ -398,12 +414,12 @@
     const phoneInput = $("#response-phone");
     const partySizeField = $("#party-size-field");
     const partySizeInput = $("#party-size");
-    const partySizeHint = $("#party-size-hint");
     const smsOptIn = $("#sms-opt-in");
     const api = getRsvpApiConfig();
     const generalMax = clampInteger(config.rsvp?.generalMaxPartySize, 1, 7, 7);
     let currentToken = capturedInvite.token;
     let currentMax = generalMax;
+    let savedDietaryNotes = "";
 
     function setStatus(message, type = "") {
       const safeMessage = cleanText(message);
@@ -423,7 +439,6 @@
     function setPartyLimit(maximum) {
       currentMax = clampInteger(maximum, 1, 7, generalMax);
       partySizeInput.max = String(currentMax);
-      partySizeHint.textContent = `Include yourself. Up to ${currentMax} ${currentMax === 1 ? "guest" : "guests"}.`;
     }
 
     function setAttendance(value) {
@@ -435,15 +450,15 @@
       partySizeField.hidden = !attendingYes;
       partySizeInput.disabled = !attendingYes;
       partySizeInput.required = attendingYes;
-      if (attendingYes && !partySizeInput.value) partySizeInput.value = "1";
+      if (attendingYes && !partySizeInput.value) partySizeInput.value = String(Math.min(2, currentMax));
       if (!attendingYes) partySizeInput.value = "";
     }
 
     function populateForm(values = {}) {
       nameInput.value = cleanText(values.name);
       emailInput.value = cleanText(values.email);
-      phoneInput.value = cleanText(values.phone);
-      $("#dietary-notes").value = typeof values.dietaryNotes === "string" ? values.dietaryNotes.slice(0, 500) : "";
+      phoneInput.value = formatPhone(values.phone);
+      savedDietaryNotes = typeof values.dietaryNotes === "string" ? values.dietaryNotes : "";
       $("#guest-message").value = typeof values.message === "string" ? values.message.slice(0, 1000) : "";
       smsOptIn.checked = Boolean(values.smsOptIn);
       setAttendance(typeof values.attending === "boolean" ? values.attending : null);
@@ -472,6 +487,7 @@
       storeSessionToken("");
       currentMax = generalMax;
       form.reset();
+      savedDietaryNotes = "";
       setPartyLimit(generalMax);
       setAttendance(null);
       setInviteContext("");
@@ -498,6 +514,29 @@
         phoneInput.setCustomValidity("");
       });
     });
+    phoneInput.addEventListener("beforeinput", (event) => {
+      const caret = phoneInput.selectionStart;
+      if (event.inputType !== "deleteContentBackward" || caret !== phoneInput.selectionEnd) return;
+      let start = caret;
+      while (start > 0 && /[() -]/.test(phoneInput.value[start - 1])) start -= 1;
+      if (start < caret) phoneInput.setSelectionRange(Math.max(0, start - 1), caret);
+    });
+    phoneInput.addEventListener("input", (event) => {
+      if (event.isComposing) return;
+      const raw = phoneInput.value;
+      const caret = phoneInput.selectionStart ?? raw.length;
+      const digitsBeforeCaret = raw.slice(0, caret).replace(/\D/g, "").length;
+      const formatted = formatPhone(raw);
+      if (formatted === raw) return;
+      phoneInput.value = formatted;
+      let position = 0;
+      let digitsSeen = 0;
+      while (position < formatted.length && digitsSeen < digitsBeforeCaret) {
+        if (/\d/.test(formatted[position])) digitsSeen += 1;
+        position += 1;
+      }
+      phoneInput.setSelectionRange(position, position);
+    });
     useGeneralButton.addEventListener("click", useGeneralForm);
 
     if (!api) {
@@ -521,7 +560,7 @@
           setFamilyGreeting(familyLabel);
           setPartyLimit(invitation.maxPartySize);
           populateForm(invitation.form || { name: familyLabel });
-          setInviteContext(`Personal invitation for ${familyLabel} · Up to ${currentMax} ${currentMax === 1 ? "guest" : "guests"}`);
+          setInviteContext(`Personal invitation for ${familyLabel}`);
           if (invitation.hasResponded) submitButton.firstChild.textContent = "Update RSVP ";
         }
       } catch (error) {
@@ -553,7 +592,7 @@
         p_phone: phoneInput.value,
         p_attending: attending,
         p_party_size: attending ? Number.parseInt(partySizeInput.value, 10) : 0,
-        p_dietary_notes: $("#dietary-notes").value,
+        p_dietary_notes: savedDietaryNotes,
         p_message: $("#guest-message").value,
         p_email_opt_in: false,
         p_sms_opt_in: smsOptIn.checked,

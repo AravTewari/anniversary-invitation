@@ -423,6 +423,8 @@ p {
 }
 
 .hero-copy h1 {
+  width: fit-content;
+  max-width: 100%;
   margin-bottom: 28px;
   color: var(--plum);
   font-family: var(--display);
@@ -437,12 +439,13 @@ p {
 }
 
 .hero-copy .ampersand {
-  display: inline-block;
-  margin: 0.08em 0 0.09em 0.4em;
+  display: block;
+  margin: 0.08em 0 0.09em;
   color: var(--gold);
   font-size: 0.45em;
   font-style: italic;
   letter-spacing: 0;
+  text-align: center;
 }
 
 .hero-deck {

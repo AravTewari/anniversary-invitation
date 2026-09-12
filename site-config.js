@@ -8,7 +8,7 @@ window.INVITATION_CONFIG = Object.freeze({
   weddingYear: 2001,
   celebrationYear: 2026,
   invitationMessage:
-    "are celebrating 25 years of marriage. Join us for dinner and dancing in their honor.",
+    "are celebrating 25 years of love, laughter, and a life built together. We would love for you to join our family for an evening of dinner, dancing, and shared memories. It would mean so much to celebrate this special milestone with the people they love.",
   defaultFamily: "Family & Friends",
   dateLabel: "Sunday, December 20, 2026",
   timeLabel: "5:30 PM Pacific Time",

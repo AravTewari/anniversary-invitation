@@ -9,7 +9,7 @@ A mobile-first invitation with a private RSVP form. GitHub Pages hosts the publi
 - General RSVP: the normal website URL
 - Personal RSVP: `https://aravtewari.github.io/anniversary-invitation/#invite=<private-token>`
 
-A personal link prefills the family name, available phone or email, and maximum party size. The guest still selects attendance and enters the number attending. A general link opens the same form without saved details.
+A personal link prefills the family name and available phone or email. The guest selects attendance and enters the confirmed number attending. A general link opens the same form without saved details.
 
 Personal links stay in the address bar during in-page navigation. Refreshing the page reloads the same family details and shows the envelope again.
 
@@ -30,20 +30,20 @@ The database has row-level security enabled. Public visitors cannot read, update
 Start with a private CSV that has these columns:
 
 ```csv
-family_label,max_party_size,expected_email,expected_phone,planning_status
-Example Family,4,example@example.com,+14085550123,Maybe
+family_label,expected_email,expected_phone,planning_status
+Example Family,example@example.com,+14085550123,Maybe
 ```
 
 Generate stable private links:
 
 ```sh
-node scripts/generate-invite-links.mjs private/expected-families.csv
+node scripts/generate-invite-links.mjs private/invite-families.csv
 ```
 
 The script writes:
 
-- `expected-families.supabase.csv` for the Supabase table import
-- `expected-families.links.csv` for the hosts to distribute
+- `invite-families.supabase.csv` for the Supabase table import
+- `invite-families.links.csv` for the hosts to distribute
 
 Both files contain private information. Keep them outside Git and share them only with the hosts.
 

@@ -1,86 +1,32 @@
-create extension if not exists pgcrypto;
+begin;
+set local lock_timeout = '5s';
+set local statement_timeout = '30s';
 
-create table public.rsvps (
-  id uuid primary key default gen_random_uuid(),
-  invite_token uuid not null unique default gen_random_uuid(),
+-- Remove only the pre-RSVP per-family count; preserve all guest responses.
+lock table public.rsvps in access exclusive mode;
+create temporary table rsvp_preservation_check on commit drop as
+select id, to_jsonb(r) - 'max_party_size' as data from public.rsvps r;
 
-  source text not null default 'personalized'
-    check (source in ('personalized', 'general')),
-
-  -- Values imported from the private planning sheet. Guest submissions never overwrite them.
-  family_label text,
-  expected_email text,
-  expected_phone text,
-  planning_status text,
-
-  -- Values supplied or confirmed by a guest.
-  response_name text,
-  response_email text,
-  response_phone text,
-  attending boolean,
-  party_size smallint,
-  dietary_notes text,
-  message text,
-
-  email_opt_in boolean not null default false,
-  sms_opt_in boolean not null default false,
-  email_opt_in_at timestamptz,
-  sms_opt_in_at timestamptz,
-
-  created_at timestamptz not null default now(),
-  responded_at timestamptz,
-  updated_at timestamptz not null default now(),
-
-  constraint personalized_invite_has_label check (
-    source <> 'personalized'
-    or nullif(btrim(family_label), '') is not null
-  ),
-
-  constraint response_is_complete check (
-    (
-      responded_at is null
-      and attending is null
-      and party_size is null
-      and response_name is null
-      and response_email is null
-      and response_phone is null
-    )
-    or
-    (
-      responded_at is not null
-      and attending is not null
-      and nullif(btrim(response_name), '') is not null
-      and (
-        nullif(btrim(response_email), '') is not null
-        or nullif(btrim(response_phone), '') is not null
-      )
-      and (
-        (attending is true and party_size is not null and party_size between 1 and 7)
-        or (attending is false and party_size = 0)
-      )
-    )
-  ),
-
-  constraint email_consent_has_email check (
-    not email_opt_in or nullif(btrim(response_email), '') is not null
-  ),
-
-  constraint sms_consent_has_phone check (
-    not sms_opt_in or nullif(btrim(response_phone), '') is not null
-  )
+drop view public.organizer_rsvp_status;
+alter table public.rsvps drop constraint response_is_complete;
+alter table public.rsvps drop column max_party_size;
+alter table public.rsvps add constraint response_is_complete check (
+  (responded_at is null and attending is null and party_size is null
+    and response_name is null and response_email is null and response_phone is null)
+  or
+  (responded_at is not null and attending is not null
+    and nullif(btrim(response_name), '') is not null
+    and (nullif(btrim(response_email), '') is not null or nullif(btrim(response_phone), '') is not null)
+    and ((attending is true and party_size is not null and party_size between 1 and 7)
+      or (attending is false and party_size = 0)))
 );
 
-alter table public.rsvps enable row level security;
-revoke all on table public.rsvps from public, anon, authenticated;
-
--- The random token is a private link. This function returns only that invitation.
-create or replace function public.get_invite(p_token text)
-returns jsonb
-language plpgsql
-stable
-security definer
-set search_path = ''
-as $$
+CREATE OR REPLACE FUNCTION public.get_invite(p_token text)
+ RETURNS jsonb
+ LANGUAGE plpgsql
+ STABLE SECURITY DEFINER
+ SET search_path TO ''
+AS $function$
 declare
   v_token uuid;
   v_row public.rsvps%rowtype;
@@ -119,26 +65,14 @@ begin
     )
   );
 end;
-$$;
+$function$;
 
-create or replace function public.submit_rsvp(
-  p_token text,
-  p_name text,
-  p_email text,
-  p_phone text,
-  p_attending boolean,
-  p_party_size integer,
-  p_dietary_notes text,
-  p_message text,
-  p_email_opt_in boolean,
-  p_sms_opt_in boolean,
-  p_website text default ''
-)
-returns jsonb
-language plpgsql
-security definer
-set search_path = ''
-as $$
+CREATE OR REPLACE FUNCTION public.submit_rsvp(p_token text, p_name text, p_email text, p_phone text, p_attending boolean, p_party_size integer, p_dietary_notes text, p_message text, p_email_opt_in boolean, p_sms_opt_in boolean, p_website text DEFAULT ''::text)
+ RETURNS jsonb
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+ SET search_path TO ''
+AS $function$
 declare
   v_token uuid;
   v_row public.rsvps%rowtype;
@@ -304,44 +238,43 @@ begin
     'inviteToken', v_token::text
   );
 end;
-$$;
+$function$;
 
-revoke all on function public.get_invite(text) from public;
-revoke all on function public.submit_rsvp(
-  text, text, text, text, boolean, integer,
-  text, text, boolean, boolean, text
-) from public;
+create view public.organizer_rsvp_status with (security_invoker = true) as
+ SELECT family_label,
+    planning_status,
+    expected_email,
+    expected_phone,
+    response_name,
+    response_email,
+    response_phone,
+        CASE
+            WHEN responded_at IS NULL THEN 'Pending'::text
+            WHEN attending THEN 'Attending'::text
+            ELSE 'Declined'::text
+        END AS rsvp_status,
+    party_size,
+    dietary_notes,
+    message,
+    email_opt_in,
+    sms_opt_in,
+    responded_at,
+    updated_at
+   FROM rsvps
+  ORDER BY (COALESCE(family_label, response_name));
+revoke all on table public.organizer_rsvp_status from public, anon, authenticated, service_role;
+grant truncate, references, trigger, maintain on table public.organizer_rsvp_status to service_role;
 
-grant execute on function public.get_invite(text) to anon;
-grant execute on function public.submit_rsvp(
-  text, text, text, text, boolean, integer,
-  text, text, boolean, boolean, text
-) to anon;
+do $verify$
+begin
+  if exists (
+    select 1 from rsvp_preservation_check b
+    full join public.rsvps r using (id)
+    where b.data is distinct from to_jsonb(r)
+  ) then
+    raise exception 'RSVP data changed unexpectedly; rolling back.';
+  end if;
+end;
+$verify$;
 
-create view public.organizer_rsvp_status
-with (security_invoker = true)
-as
-select
-  family_label,
-  planning_status,
-  expected_email,
-  expected_phone,
-  response_name,
-  response_email,
-  response_phone,
-  case
-    when responded_at is null then 'Pending'
-    when attending then 'Attending'
-    else 'Declined'
-  end as rsvp_status,
-  party_size,
-  dietary_notes,
-  message,
-  email_opt_in,
-  sms_opt_in,
-  responded_at,
-  updated_at
-from public.rsvps
-order by coalesce(family_label, response_name);
-
-revoke all on table public.organizer_rsvp_status from public, anon, authenticated;
+commit;

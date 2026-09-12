@@ -435,8 +435,8 @@
       useGeneralButton.hidden = !allowSwitch;
     }
 
-    function setPartyLimit(maximum) {
-      currentMax = clampInteger(maximum, 1, 7, generalMax);
+    function setPartyLimit() {
+      currentMax = generalMax;
       partySizeInput.max = String(currentMax);
     }
 
@@ -482,7 +482,7 @@
       currentMax = generalMax;
       form.reset();
       savedDietaryNotes = "";
-      setPartyLimit(generalMax);
+      setPartyLimit();
       setAttendance(null);
       setInviteContext("");
       setFamilyGreeting(config.defaultFamily);
@@ -492,7 +492,7 @@
       nameInput.focus({ preventScroll: true });
     }
 
-    setPartyLimit(generalMax);
+    setPartyLimit();
     setAttendance(null);
 
     if (!currentToken && initialFamily !== config.defaultFamily) {
@@ -552,7 +552,6 @@
         } else {
           const familyLabel = cleanText(invitation.familyLabel, config.defaultFamily);
           setFamilyGreeting(familyLabel);
-          setPartyLimit(invitation.maxPartySize);
           populateForm(invitation.form || { name: familyLabel });
           setInviteContext(`Personal invitation for ${familyLabel}`);
           if (invitation.hasResponded) submitButton.firstChild.textContent = "Update RSVP ";

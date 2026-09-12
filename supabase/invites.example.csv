@@ -1,2 +1,2 @@
-invite_token,source,family_label,expected_email,expected_phone,planning_status,max_party_size
-5d3bfe56-4839-4fe4-bef8-5b0e725a9827,personalized,Example Family,example@example.com,+14085550123,Maybe,4
+invite_token,source,family_label,expected_email,expected_phone,planning_status
+5d3bfe56-4839-4fe4-bef8-5b0e725a9827,personalized,Example Family,example@example.com,+14085550123,Maybe

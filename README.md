@@ -99,6 +99,10 @@ internal RSVP ID, so an edited response does not create a duplicate. Each host l
 `HOST_PHONES_E164` secret receives a separate short SMS for each new or
 changed RSVP. Imported planning rows are ignored until a guest responds.
 
+To retry a failed Sheets sync without sending another family SMS, replay the saved RSVP webhook payload
+with `sheetOnly: true`. This still requires the same `x-rsvp-webhook-secret` header. The Apps Script
+`WEBHOOK_SECRET` property must match the Supabase `GOOGLE_APPS_SCRIPT_SECRET` value exactly.
+
 ## Guest SMS campaign
 
 The host confirmed that invited guests have already agreed to event texts. New or updated RSVPs with a phone number save SMS consent without a checkbox; email-only RSVPs do not. Existing records are not changed until a guest saves their RSVP. Campaigns include only attending guests with saved SMS consent. Twilio continues to block recipients who reply STOP. Preview the audience first:

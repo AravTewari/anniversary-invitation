@@ -14,6 +14,7 @@ type DatabaseWebhook = {
   schema: string;
   record: RsvpRecord;
   old_record?: Record<string, unknown> | null;
+  sheetOnly?: boolean;
 };
 
 async function updateGoogleSheet(payload: DatabaseWebhook): Promise<void> {
@@ -51,7 +52,7 @@ Deno.serve(async (request: Request) => {
 
     const jobs = [
       { name: "sheet", promise: updateGoogleSheet(payload) },
-      ...hostPhones.map((phone, index) => ({ name: `hostSms${index + 1}`, promise: sendSms(phone, message) })),
+      ...(payload.sheetOnly === true ? [] : hostPhones.map((phone, index) => ({ name: `hostSms${index + 1}`, promise: sendSms(phone, message) }))),
     ];
     const results = await Promise.allSettled(jobs.map((job) => job.promise));
     const failed = results.flatMap((result, index) => (result.status === "rejected" ? [jobs[index].name] : []));

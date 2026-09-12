@@ -18,7 +18,8 @@ window.INVITATION_CONFIG = Object.freeze({
   mapsUrl: "https://www.google.com/maps/search/?api=1&query=5200%20Mowry%20Ave%20Suite%20K%2C%20Fremont%2C%20CA%2094538",
   calendarUrl: "",
   cityLabel: "Fremont, California",
-  dressCode: "Festive Indian or cocktail attire; silver, champagne, and rose are welcome.",
+  dressCodeWomen: "Cocktail sarees or lehengas.",
+  dressCodeMen: "Western formal — suits or dinner jackets.",
   rsvpDeadline: "Please reply as soon as you can.",
   rsvp: {
     supabaseUrl: "https://bcmxwtlfndvdsbiwaams.supabase.co",

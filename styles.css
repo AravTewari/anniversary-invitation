@@ -680,7 +680,7 @@ p {
 .event-facts article > p:not(.fact-label) {
   min-height: 48px;
   margin-bottom: 14px;
-  color: var(--ink);
+  color: var(--muted);
   font-size: clamp(1.0625rem, 1.5vw, 1.125rem);
   font-weight: 600;
   line-height: 1.6;

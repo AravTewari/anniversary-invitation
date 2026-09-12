@@ -422,6 +422,15 @@ p {
   font-style: italic;
 }
 
+.hero-intro {
+  max-width: 420px;
+  margin-bottom: 28px;
+  color: var(--muted);
+  font-family: var(--display);
+  font-size: clamp(1.15rem, 2vw, 1.45rem);
+  line-height: 1.42;
+}
+
 .hero-copy h1 {
   width: fit-content;
   max-width: 100%;
@@ -986,6 +995,16 @@ footer {
   color: var(--muted);
   font-size: 0.78rem;
   text-align: center;
+}
+
+.footer-closing {
+  max-width: 540px;
+  margin: 0 auto 32px;
+  color: var(--plum);
+  font-family: var(--display);
+  font-size: clamp(1.25rem, 2.4vw, 1.7rem);
+  font-style: italic;
+  line-height: 1.42;
 }
 
 .footer-names {

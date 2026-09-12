@@ -205,6 +205,8 @@
       "contactText",
     ].forEach((key) => setText(`[data-config="${key}"]`, config[key]));
 
+    setText("#event-date", config.dateLabel.replace(", ", "\n"));
+
     document.title = `${config.yearsTogether} Years of Love | ${config.couple.partner1} & ${config.couple.partner2}`;
   }
 

@@ -677,6 +677,10 @@ p {
   line-height: 1.08;
 }
 
+#event-date {
+  white-space: pre;
+}
+
 .event-facts article > p:not(.fact-label) {
   min-height: 48px;
   margin-bottom: 14px;

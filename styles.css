@@ -439,21 +439,23 @@ p {
 }
 
 .anniversary-title {
+  display: flex;
+  align-items: baseline;
+  gap: 0.18em;
   width: fit-content;
   max-width: 100%;
   margin-bottom: 12px;
   color: var(--plum);
   font-family: "Pinyon Script", var(--display);
+  font-size: clamp(2.75rem, 4.7vw, 4.5rem);
   font-weight: 400;
   letter-spacing: 0;
-  line-height: 1;
+  line-height: 1.2;
+  white-space: nowrap;
 }
 
 .anniversary-number {
-  display: block;
   color: var(--gold);
-  font-size: clamp(5.4rem, 8vw, 7rem);
-  line-height: 0.95;
 }
 
 .anniversary-number sup {
@@ -461,12 +463,6 @@ p {
   font-size: 0.32em;
   line-height: 0;
   vertical-align: super;
-}
-
-.anniversary-word {
-  display: block;
-  font-size: clamp(3.2rem, 5.5vw, 5.3rem);
-  line-height: 1.1;
 }
 
 .anniversary-of {
@@ -485,7 +481,7 @@ p {
   margin-bottom: 24px;
   color: var(--plum);
   font-family: var(--display);
-  font-size: clamp(2rem, 4.2vw, 3.5rem);
+  font-size: clamp(2.45rem, 4.8vw, 4rem);
   letter-spacing: -0.04em;
   line-height: 1.2;
   white-space: nowrap;

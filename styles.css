@@ -1,3 +1,11 @@
+@font-face {
+  font-family: "Pinyon Script";
+  src: url("./assets/fonts/pinyon-script.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
 :root {
   --ivory: #f6f1e8;
   --paper: #fffdf8;
@@ -423,47 +431,80 @@ p {
 }
 
 .hero-intro {
-  max-width: 420px;
-  margin-bottom: 28px;
+  margin-bottom: 22px;
   color: var(--muted);
-  font-family: var(--display);
-  font-size: clamp(1.15rem, 2vw, 1.45rem);
-  line-height: 1.42;
+  font-family: var(--body);
+  font-size: clamp(0.95rem, 1.2vw, 1.1rem);
+  line-height: 1.6;
 }
 
-.hero-copy h1 {
+.anniversary-title {
   width: fit-content;
   max-width: 100%;
-  margin-bottom: 28px;
+  margin-bottom: 12px;
+  color: var(--plum);
+  font-family: "Pinyon Script", var(--display);
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: 1;
+}
+
+.anniversary-number {
+  display: block;
+  color: var(--gold);
+  font-size: clamp(5.4rem, 8vw, 7rem);
+  line-height: 0.95;
+}
+
+.anniversary-number sup {
+  margin-left: 0.06em;
+  font-size: 0.32em;
+  line-height: 0;
+  vertical-align: super;
+}
+
+.anniversary-word {
+  display: block;
+  font-size: clamp(3.2rem, 5.5vw, 5.3rem);
+  line-height: 1.1;
+}
+
+.anniversary-of {
+  margin-bottom: 4px;
+  color: var(--muted);
+  font-family: var(--display);
+  font-size: 1rem;
+  font-style: italic;
+  line-height: 1.2;
+}
+
+.hero-couple {
+  display: flex;
+  align-items: baseline;
+  gap: 0.18em;
+  margin-bottom: 24px;
   color: var(--plum);
   font-family: var(--display);
-  font-size: clamp(4.6rem, 9vw, 7rem);
-  font-weight: 400;
-  letter-spacing: -0.07em;
-  line-height: 0.78;
+  font-size: clamp(2rem, 4.2vw, 3.5rem);
+  letter-spacing: -0.04em;
+  line-height: 1.2;
+  white-space: nowrap;
 }
 
-.hero-copy h1 > span:not(.ampersand) {
-  display: block;
-}
-
-.hero-copy .ampersand {
-  display: block;
-  margin: 0.08em 0 0.09em;
+.hero-couple .ampersand {
   color: var(--gold);
-  font-size: 0.45em;
+  font-size: 0.8em;
   font-style: italic;
   letter-spacing: 0;
-  text-align: center;
 }
 
 .hero-deck {
-  max-width: 570px;
+  max-width: 520px;
   margin-bottom: 24px;
   color: #51464a;
-  font-family: var(--display);
-  font-size: clamp(1.25rem, 2.4vw, 1.7rem);
-  line-height: 1.42;
+  font-family: var(--body);
+  font-size: clamp(1rem, 1.25vw, 1.1rem);
+  line-height: 1.75;
 }
 
 .hero-date {
@@ -1112,10 +1153,6 @@ footer {
   .hero {
     min-height: auto;
     padding: 106px 20px 70px;
-  }
-
-  .hero-copy h1 {
-    font-size: clamp(4.2rem, 22vw, 6rem);
   }
 
   .hero-date {

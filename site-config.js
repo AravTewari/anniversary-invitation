@@ -34,19 +34,16 @@ window.INVITATION_CONFIG = Object.freeze({
   contactText: "Questions? Please contact Arav or the host who shared this invitation.",
   timeline: [
     {
-      time: "6:00 PM",
-      title: "Welcome and cocktails",
-      description: "",
+      title: "Welcome and grand entry",
     },
     {
-      time: "7:00 PM",
-      title: "Celebration program",
-      description: "",
+      title: "Cake cutting",
     },
     {
-      time: "8:30 PM",
-      title: "Dinner, cake, and dancing",
-      description: "",
+      title: "Celebration, program, and games",
+    },
+    {
+      title: "Dinner and dancing",
     },
   ],
 });

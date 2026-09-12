@@ -260,24 +260,15 @@
       const row = document.createElement("li");
       row.className = "timeline-item reveal";
 
-      const time = document.createElement("div");
-      time.className = "timeline-time";
-      time.textContent = cleanText(item.time);
-
-      const content = document.createElement("div");
-      content.className = "timeline-content";
+      const bullet = document.createElement("span");
+      bullet.className = "timeline-bullet";
+      bullet.setAttribute("aria-hidden", "true");
+      bullet.textContent = "✦";
 
       const title = document.createElement("h3");
       title.textContent = cleanText(item.title);
 
-      content.append(title);
-      const descriptionText = cleanText(item.description);
-      if (descriptionText) {
-        const description = document.createElement("p");
-        description.textContent = descriptionText;
-        content.append(description);
-      }
-      row.append(time, content);
+      row.append(bullet, title);
       timeline.append(row);
     });
   }

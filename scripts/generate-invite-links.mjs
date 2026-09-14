@@ -53,6 +53,13 @@ function toCsv(rows) {
   return `${rows.map((row) => row.map(csvValue).join(",")).join("\n")}\n`;
 }
 
+function shortInviteToken(value) {
+  if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value)) {
+    throw new Error(`Invite token must be a UUID: ${value}`);
+  }
+  return Buffer.from(value.replaceAll("-", ""), "hex").toString("base64url");
+}
+
 const input = parseCsv(await fs.readFile(inputPath, "utf8"));
 const headers = input.shift()?.map((header) => header.trim()) || [];
 const requiredHeaders = ["family_label", "expected_email", "expected_phone", "planning_status"];
@@ -95,7 +102,7 @@ const linkRows = [
     record.familyLabel,
     record.expectedEmail,
     record.expectedPhone,
-    `${siteUrl}/#invite=${record.inviteToken}`,
+    `${siteUrl}/#${shortInviteToken(record.inviteToken)}`,
   ]),
 ];
 

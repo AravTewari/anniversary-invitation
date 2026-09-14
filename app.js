@@ -47,10 +47,38 @@
   }
 
   function normalizeInviteToken(value) {
-    const token = cleanText(value).toLowerCase();
-    return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(token)
-      ? token
-      : "";
+    const token = cleanText(value);
+    if (/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(token)) {
+      return token.toLowerCase();
+    }
+    return /^[A-Za-z0-9_-]{21}[AQgw]$/.test(token) ? token : "";
+  }
+
+  function shortInviteToken(value) {
+    const uuid = normalizeInviteToken(value);
+    if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(uuid)) return "";
+
+    const bytes = new Uint8Array(uuid.replaceAll("-", "").match(/../g).map((pair) => Number.parseInt(pair, 16)));
+    let binary = "";
+    bytes.forEach((byte) => { binary += String.fromCharCode(byte); });
+    return window.btoa(binary).replaceAll("+", "-").replaceAll("/", "_").replace(/=+$/, "");
+  }
+
+  function inviteTokenForRpc(token) {
+    if (!/^[A-Za-z0-9_-]{22}$/.test(token)) return token;
+    try {
+      const base64 = token.replaceAll("-", "+").replaceAll("_", "/") + "==";
+      const binary = window.atob(base64);
+      if (binary.length !== 16) return "";
+      const hex = Array.from(binary, (character) => character.charCodeAt(0).toString(16).padStart(2, "0")).join("");
+      return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`;
+    } catch {
+      return "";
+    }
+  }
+
+  function inviteHash(token) {
+    return /^[A-Za-z0-9_-]{22}$/.test(token) ? `#${token}` : `#invite=${token}`;
   }
 
   function readSessionToken() {
@@ -73,9 +101,10 @@
   function captureInviteToken() {
     const hashParams = new URLSearchParams(window.location.hash.slice(1));
     const queryParams = new URLSearchParams(window.location.search);
-    const hashHasToken = hashParams.has("invite");
+    const bareHashToken = normalizeInviteToken(window.location.hash.slice(1));
+    const hashHasToken = hashParams.has("invite") || Boolean(bareHashToken);
     const queryHasToken = queryParams.has("invite");
-    const suppliedToken = hashParams.get("invite") ?? queryParams.get("invite");
+    const suppliedToken = hashParams.get("invite") ?? (bareHashToken || queryParams.get("invite"));
 
     if (!hashHasToken && !queryHasToken) {
       storeSessionToken("");
@@ -87,7 +116,7 @@
     queryParams.delete("invite");
 
     const nextQuery = queryParams.toString();
-    const nextHash = token ? `#invite=${token}` : hashHasToken ? "#top" : window.location.hash;
+    const nextHash = token ? inviteHash(token) : hashHasToken ? "#top" : window.location.hash;
     window.history.replaceState(
       null,
       "",
@@ -543,7 +572,7 @@
       setInviteContext("Loading your personal invitation…", false);
 
       try {
-        const invitation = await callRsvpFunction(api, api.lookupFunction, { p_token: currentToken });
+        const invitation = await callRsvpFunction(api, api.lookupFunction, { p_token: inviteTokenForRpc(currentToken) });
         if (!invitation || !invitation.found) {
           currentToken = "";
           storeSessionToken("");
@@ -579,7 +608,7 @@
       const attendingValue = new FormData(form).get("attending");
       const attending = attendingValue === "yes";
       const payload = {
-        p_token: currentToken || "",
+        p_token: currentToken ? inviteTokenForRpc(currentToken) : "",
         p_name: nameInput.value,
         p_email: emailInput.value,
         p_phone: phoneInput.value,
@@ -601,13 +630,13 @@
         const result = await callRsvpFunction(api, api.submitFunction, payload);
         if (!result || !result.ok) throw new Error("We could not save your response. Please try again.");
 
-        currentToken = normalizeInviteToken(result.inviteToken) || currentToken;
+        currentToken = currentToken || shortInviteToken(result.inviteToken);
         storeSessionToken(currentToken);
         if (currentToken) {
           window.history.replaceState(
             null,
             "",
-            `${window.location.pathname}${window.location.search}#invite=${currentToken}`,
+            `${window.location.pathname}${window.location.search}${inviteHash(currentToken)}`,
           );
         }
         setFamilyGreeting(nameInput.value);

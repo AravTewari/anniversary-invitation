@@ -7,11 +7,11 @@ A mobile-first invitation with a private RSVP form. GitHub Pages hosts the publi
 - Website: `https://aravtewari.github.io/anniversary-invitation/`
 - Repository: `https://github.com/AravTewari/anniversary-invitation`
 - General RSVP: the normal website URL
-- Personal RSVP: `https://aravtewari.github.io/anniversary-invitation/#invite=<private-token>`
+- Personal RSVP: `https://aravtewari.github.io/anniversary-invitation/#<22-character-private-token>`
 
 A personal link prefills the family name and available phone or email. The guest selects attendance and enters the confirmed number attending. A general link opens the same form without saved details.
 
-Personal links stay in the address bar during in-page navigation. Refreshing the page reloads the same family details and shows the envelope again.
+Personal links stay in the address bar during in-page navigation. Refreshing the page reloads the same family details and shows the envelope again. New links use a lossless, URL-safe encoding of the private UUID token; older `#invite=<UUID>` links continue to work.
 
 ## Supabase setup
 

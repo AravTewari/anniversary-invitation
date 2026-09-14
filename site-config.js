@@ -6,7 +6,7 @@ window.INVITATION_CONFIG = Object.freeze({
   },
   yearsTogether: 25,
   weddingYear: 2001,
-  celebrationYear: "Present",
+  celebrationYear: "Onwards",
   invitationMessage:
     "Having you with us will make this milestone truly complete. Please join us as we celebrate twenty-five years of love, laughter, and lifelong friendships.",
   defaultFamily: "Family & Friends",
